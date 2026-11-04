@@ -104,3 +104,15 @@ def test_statistics_reset_endpoint():
     assert stats["total_tokens_saved"] == 0
     assert stats["total_cost_saved"] == 0.0
     assert stats["improvement_rate_percentage"] == 0.0
+
+def test_create_session():
+    response = client.post("/sessions")
+
+    assert response.status_code == 201
+
+    data = response.json()
+
+    assert "session_id" in data
+    assert "started_at" in data
+    assert "expires_at" in data
+    assert data["status"] == "active"

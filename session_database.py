@@ -108,6 +108,29 @@ def create_session():
         "status": "active"
     }
 
+def get_session_details(session_id):
+    """Retrieve the stored details of a conversation session."""
+
+    connection = get_session_connection()
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        SELECT session_id, started_at, expires_at, status
+        FROM conversation_sessions
+        WHERE session_id = ?
+        """,
+        (session_id,)
+    )
+
+    session = cursor.fetchone()
+    connection.close()
+
+    if session is None:
+        return None
+
+    return dict(session)
+
 def is_session_expired(session_id, now=None):
     """Check whether a session has reached its expiration time."""
 

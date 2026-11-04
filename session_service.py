@@ -1,4 +1,4 @@
-from session_database import is_session_expired, finalize_session, create_session, get_session_messages, save_message, record_session_optimization
+from session_database import is_session_expired, finalize_session, create_session, get_session_messages, save_message, record_session_optimization, get_session_details
 from datetime import datetime, timedelta, timezone
 from optimization_service import optimize_text
 
@@ -13,12 +13,54 @@ def start_new_session():
         "status": session["status"]
     }
 
+def get_session_status(session_id):
+    session = get_session_details(session_id)
+
+    if session is None:
+        raise ValueError("Session not found")
+
+    expired = is_session_expired(session_id)
+
+    if expired and session["status"] == "active":
+        finalize_expired_session(session_id)
+        session = get_session_details(session_id)
+
+    expires_at = datetime.fromisoformat(
+        session["expires_at"].replace("Z", "+00:00")
+    )
+
+    remaining_seconds = 0
+
+    if session["status"] == "active":
+        remaining_seconds = max(
+            0,
+            int((expires_at - datetime.now(timezone.utc)).total_seconds())
+        )
+
+    return {
+        "session_id": session["session_id"],
+        "started_at": session["started_at"],
+        "expires_at": session["expires_at"],
+        "status": session["status"] if session["status"] == "completed" else (
+            "expired" if expired else session["status"]
+        ),
+        "remaining_seconds": remaining_seconds
+    }
+
 def validate_session(session_id):
-    """Validate whether a conversation session is active."""
+    """Validate a session and finalize it if it has expired."""
+
+    session = get_session_details(session_id)
+
+    if session is None:
+        raise ValueError("Session not found")
 
     expired = is_session_expired(session_id)
 
     if expired:
+        if session["status"] == "active":
+            finalize_expired_session(session_id)
+
         return False
 
     return True

@@ -1,11 +1,15 @@
 from fastapi import FastAPI, HTTPException
-from schemas import TokenRequest, OptimizeRequest, SessionResponse
+from schemas import TokenRequest, OptimizeRequest, SessionResponse, SessionStatusResponse, SessionPromptRequest
 from token_counter import count_tokens
 from optimization_service import optimize_text
 from statistics_tracker import record_optimization, get_statistics, reset_statistics
 from database import initialize_database, save_optimization, get_optimization_history
-from session_database import get_session_report, get_all_session_reports
-from session_service import start_new_session
+from session_service import start_new_session, get_session_status, get_conversation_history, process_session_prompt
+from session_database import (
+    initialize_session_database,
+    get_session_report,
+    get_all_session_reports
+)
 
 
 app = FastAPI()
@@ -53,6 +57,7 @@ def reset_statistics_endpoint():
 @app.on_event("startup")
 def startup_event():
     initialize_database()
+    initialize_session_database()
 
 
 @app.get("/history")
@@ -85,6 +90,43 @@ def single_session_report_endpoint(session_id: str):
 
     return report
 
-@app.post("/session", response_model=SessionResponse, status_code=201)
+@app.post("/sessions", response_model=SessionResponse, status_code=201)
 def create_session_endpoint():
     return start_new_session()
+
+@app.get("/sessions/{session_id}", response_model=SessionStatusResponse)
+def session_status_endpoint(session_id: str):
+    try:
+        return get_session_status(session_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+
+@app.get("/sessions/{session_id}/history")
+def session_history_endpoint(session_id: str):
+    try:
+        return {
+            "session_id": session_id,
+            "messages": get_conversation_history(session_id)
+        }
+    except ValueError as exc:
+        if "not found" in str(exc).lower():
+            raise HTTPException(status_code=404, detail=str(exc))
+
+        raise HTTPException(status_code=410, detail=str(exc))
+
+@app.post("/sessions/{session_id}/optimize")
+def session_optimize_endpoint(
+    session_id: str,
+    request: SessionPromptRequest
+):
+    try:
+        return process_session_prompt(
+            session_id,
+            request.text,
+            request.model_name
+        )
+    except ValueError as exc:
+        if "not found" in str(exc).lower():
+            raise HTTPException(status_code=404, detail=str(exc))
+
+        raise HTTPException(status_code=410, detail=str(exc))   
