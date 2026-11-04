@@ -1,0 +1,30 @@
+from candidate_engine import select_best_candidate
+from token_counter import count_tokens
+
+def test_candidate_engine_returns_required_fields():
+    result = select_best_candidate("Hello world.")
+
+    assert "optimized_text" in result
+    assert "selected_strategy" in result
+    assert "optimized_token_count" in result
+
+
+def test_original_is_selected_when_no_strategy_improves():
+    text = "Hello world."
+
+    result = select_best_candidate(text)
+
+    assert result["optimized_text"] == text
+    assert result["selected_strategy"] == "original"
+
+
+def test_candidate_engine_does_not_increase_tokens():
+    text = (
+        "Token optimization saves money.\n"
+        "Token optimization saves money.\n"
+        "Token optimization saves money."
+    )
+
+    result = select_best_candidate(text)
+
+    assert result["optimized_token_count"] <= count_tokens(text)
