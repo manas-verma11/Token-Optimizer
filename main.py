@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from schemas import TokenRequest, OptimizeRequest, SessionResponse, SessionStatusResponse, SessionPromptRequest
 from token_counter import count_tokens
@@ -12,7 +13,14 @@ from session_database import (
 )
 
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    initialize_database()
+    initialize_session_database()
+
+    yield
+
+app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
 def home():
@@ -53,11 +61,6 @@ def reset_statistics_endpoint():
         "message": "Statistics reset successfully",
         "statistics": get_statistics()
     }
-
-@app.on_event("startup")
-def startup_event():
-    initialize_database()
-    initialize_session_database()
 
 
 @app.get("/history")
