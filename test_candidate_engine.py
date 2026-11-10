@@ -55,3 +55,11 @@ def test_candidate_engine_selects_filler_word_removal():
     assert result["selected_strategy"] == "filler_word_removal"
     assert result["optimized_text"] == "This is a useful project."
     assert result["optimized_token_count"] < count_tokens(text)
+
+def test_candidate_engine_rejects_candidate_that_removes_negation():
+    result = select_best_candidate(
+        "I do not agree with this decision. "
+        "I do not agree with this decision."
+    )
+
+    assert "not" in result["optimized_text"].lower()
