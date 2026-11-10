@@ -46,3 +46,12 @@ def test_candidate_engine_selects_common_expression_shortening():
     assert result["selected_strategy"] == "common_expression_shortening"
     assert result["optimized_text"] == "To learn Python programming."
     assert result["optimized_token_count"] == 5
+
+def test_candidate_engine_selects_filler_word_removal():
+    text = "This is actually a useful project."
+
+    result = select_best_candidate(text)
+
+    assert result["selected_strategy"] == "filler_word_removal"
+    assert result["optimized_text"] == "This is a useful project."
+    assert result["optimized_token_count"] < count_tokens(text)

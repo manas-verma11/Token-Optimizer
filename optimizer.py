@@ -101,3 +101,29 @@ def shorten_common_expressions(text):
         text = pattern.sub(replace_match, text)
 
     return text
+
+
+def remove_filler_words(text):
+    if not text.strip():
+        return ""
+
+    filler_patterns = [
+        r"\bactually\b",
+        r"\bbasically\b",
+        r"\bliterally\b",
+    ]
+
+    for pattern in filler_patterns:
+        text = re.sub(
+            pattern,
+            "",
+            text,
+            flags=re.IGNORECASE
+        )
+
+    # Clean up spaces left behind after removing filler words.
+    text = re.sub(r"[ \t]{2,}", " ", text)
+    text = re.sub(r" +([,.!?;:])", r"\1", text)
+    text = re.sub(r"^[ \t]*[,;:]\s*", "", text)
+
+    return text

@@ -5,7 +5,8 @@ from optimizer import (
     normalize_whitespace,
     remove_duplicate_sentences,
     remove_repeated_phrases,
-    shorten_common_expressions
+    shorten_common_expressions,
+    remove_filler_words
 )
 
 
@@ -37,7 +38,11 @@ def select_best_candidate(original_text):
         {
             "strategy": "common_expression_shortening",
             "text": shorten_common_expressions(original_text)
-        }
+        },
+        {
+            "strategy": "filler_word_removal",
+            "text": remove_filler_words(original_text)
+        }   
     ]
 
     best_candidate = candidates[0]

@@ -3,6 +3,7 @@ from optimizer import normalize_whitespace
 from optimizer import remove_duplicate_sentences
 from optimizer import remove_repeated_phrases
 from optimizer import shorten_common_expressions
+from optimizer import remove_filler_words
 
 def test_remove_duplicate_lines():
     text = "Apple\nBanana\nApple"
@@ -194,3 +195,22 @@ def test_shorten_on_a_regular_basis():
     assert shorten_common_expressions(
         "Check the logs on a regular basis."
     ) == "Check the logs regularly."
+
+
+def test_remove_actually():
+    assert remove_filler_words("This is actually useful.") == "This is useful."
+
+def test_remove_basically():
+    assert remove_filler_words("Basically, we need to optimize tokens.") == "we need to optimize tokens."
+
+def test_remove_literally():
+    assert remove_filler_words("I literally forgot the password.") == "I forgot the password."
+
+def test_remove_filler_words_empty_text():
+    assert remove_filler_words("") == ""
+
+def test_remove_multiple_filler_words():
+    assert remove_filler_words("Basically, this is actually useful.") == "this is useful."
+
+def test_remove_filler_words_case_insensitively():
+    assert remove_filler_words("ACTUALLY, this works.") == "this works."
