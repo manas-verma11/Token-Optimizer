@@ -3,7 +3,8 @@ from token_counter import count_tokens
 from optimizer import (
     remove_duplicate_lines,
     normalize_whitespace,
-    remove_duplicate_sentences
+    remove_duplicate_sentences,
+    remove_repeated_phrases
 )
 
 
@@ -27,6 +28,10 @@ def select_best_candidate(original_text):
         {
             "strategy": "duplicate_sentence_removal",
             "text": remove_duplicate_sentences(original_text)
+        },
+        {
+            "strategy": "repeated_phrase_removal",
+            "text": remove_repeated_phrases(original_text)
         }
     ]
 

@@ -1,6 +1,7 @@
 from optimizer import remove_duplicate_lines
 from optimizer import normalize_whitespace
 from optimizer import remove_duplicate_sentences
+from optimizer import remove_repeated_phrases
 
 def test_remove_duplicate_lines():
     text = "Apple\nBanana\nApple"
@@ -80,3 +81,34 @@ def test_remove_duplicate_sentences_multiple_lines():
     result = remove_duplicate_sentences(text)
 
     assert result == "Hello world. Python is useful."
+
+def test_remove_repeated_phrases():
+    text = "Explain token optimization token optimization clearly."
+
+    result = remove_repeated_phrases(text)
+
+    assert result == "Explain token optimization clearly."
+
+
+def test_remove_repeated_phrases_case_insensitive():
+    text = "Learn Python Learn python today."
+
+    result = remove_repeated_phrases(text)
+
+    assert result == "Learn Python today."
+
+
+def test_remove_repeated_phrases_empty_text():
+    assert remove_repeated_phrases("") == ""
+
+
+def test_remove_repeated_phrases_preserves_non_repeated_text():
+    text = "Explain token optimization clearly."
+
+    assert remove_repeated_phrases(text) == text
+
+
+def test_remove_repeated_phrases_preserves_single_word_repetition():
+    text = "This is very very important."
+
+    assert remove_repeated_phrases(text) == text

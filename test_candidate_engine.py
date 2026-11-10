@@ -28,3 +28,12 @@ def test_candidate_engine_does_not_increase_tokens():
     result = select_best_candidate(text)
 
     assert result["optimized_token_count"] <= count_tokens(text)
+
+def test_candidate_engine_selects_repeated_phrase_removal():
+    text = "Explain token optimization token optimization clearly."
+
+    result = select_best_candidate(text)
+
+    assert result["selected_strategy"] == "repeated_phrase_removal"
+    assert result["optimized_text"] == "Explain token optimization clearly."
+    assert result["optimized_token_count"] == 6

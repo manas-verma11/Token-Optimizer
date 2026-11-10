@@ -50,3 +50,14 @@ def remove_duplicate_sentences(text):
             unique_sentences.append(sentence)
 
     return " ".join(unique_sentences)
+
+def remove_repeated_phrases(text):
+    if not text.strip():
+        return ""
+
+    pattern = re.compile(
+        r"\b(?P<phrase>(?:[\w'-]+[ \t]+){1,}[\w'-]+)(?:[ \t]+(?P=phrase))\b",
+        flags=re.IGNORECASE
+    )
+
+    return pattern.sub(r"\g<phrase>", text)
