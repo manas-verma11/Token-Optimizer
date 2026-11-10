@@ -37,3 +37,12 @@ def test_candidate_engine_selects_repeated_phrase_removal():
     assert result["selected_strategy"] == "repeated_phrase_removal"
     assert result["optimized_text"] == "Explain token optimization clearly."
     assert result["optimized_token_count"] == 6
+
+def test_candidate_engine_selects_common_expression_shortening():
+    text = "In order to learn Python programming."
+
+    result = select_best_candidate(text)
+
+    assert result["selected_strategy"] == "common_expression_shortening"
+    assert result["optimized_text"] == "To learn Python programming."
+    assert result["optimized_token_count"] == 5

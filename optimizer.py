@@ -61,3 +61,43 @@ def remove_repeated_phrases(text):
     )
 
     return pattern.sub(r"\g<phrase>", text)
+
+def shorten_common_expressions(text):
+    if not text.strip():
+        return ""
+
+    replacements = {
+        "due to the fact that": "because",
+        "at this point in time": "now",
+        "at the present time": "now",
+        "in the near future": "soon",
+        "in the event that": "if",
+        "despite the fact that": "although",
+        "for the reason that": "because",
+        "on a daily basis": "daily",
+        "on a regular basis": "regularly",
+        "in order to": "to",
+        "make use of": "use",
+        "for the purpose of": "for"
+    }
+
+    for original, replacement in replacements.items():
+        pattern = re.compile(
+            r"\b" + re.escape(original) + r"\b",
+            flags=re.IGNORECASE
+        )
+
+        def replace_match(match):
+            original_text = match.group(0)
+
+            if original_text.isupper():
+                return replacement.upper()
+
+            if original_text[0].isupper():
+                return replacement.capitalize()
+
+            return replacement
+
+        text = pattern.sub(replace_match, text)
+
+    return text
