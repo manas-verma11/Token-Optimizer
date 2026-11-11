@@ -1,4 +1,4 @@
-from semantic_validator import preserves_negation
+from semantic_validator import validate_semantics
 from token_counter import count_tokens
 from optimizer import (
     remove_duplicate_lines,
@@ -57,10 +57,12 @@ def select_best_candidate(original_text):
 
         tokens_saved = original_count - current_token_count
 
-        is_semantically_safe = preserves_negation(
+        validation_result = validate_semantics(
             original_text,
             candidate["text"]
         )
+
+        is_semantically_safe = validation_result["is_safe"]
 
         if is_semantically_safe and current_token_count < best_token_count:
             best_candidate = candidate
