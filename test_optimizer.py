@@ -4,6 +4,7 @@ from optimizer import remove_duplicate_sentences
 from optimizer import remove_repeated_phrases
 from optimizer import shorten_common_expressions
 from optimizer import remove_filler_words
+from optimizer import remove_stop_words
 
 def test_remove_duplicate_lines():
     text = "Apple\nBanana\nApple"
@@ -214,3 +215,18 @@ def test_remove_multiple_filler_words():
 
 def test_remove_filler_words_case_insensitively():
     assert remove_filler_words("ACTUALLY, this works.") == "this works."
+
+def test_remove_stop_words():
+    assert remove_stop_words(
+        "The developer built a new application."
+    ) == "developer built new application."
+
+
+def test_remove_stop_words_preserves_negation():
+    assert remove_stop_words(
+        "The user does not approve the request."
+    ) == "user does not approve request."
+
+
+def test_remove_stop_words_empty_text():
+    assert remove_stop_words("") == ""

@@ -6,9 +6,9 @@ from optimizer import (
     remove_duplicate_sentences,
     remove_repeated_phrases,
     shorten_common_expressions,
-    remove_filler_words
+    remove_filler_words,
+    remove_stop_words
 )
-
 
 
 def select_best_candidate(original_text):
@@ -43,7 +43,11 @@ def select_best_candidate(original_text):
         {
             "strategy": "filler_word_removal",
             "text": remove_filler_words(original_text)
-        }   
+        },
+        {
+            "strategy": "conservative_stop_word_removal",
+            "text": remove_stop_words(original_text)
+        }  
     ]
 
     best_candidate = candidates[0]

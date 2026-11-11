@@ -127,3 +127,30 @@ def remove_filler_words(text):
     text = re.sub(r"^[ \t]*[,;:]\s*", "", text)
 
     return text
+
+
+def remove_stop_words(text):
+    if not text.strip():
+        return ""
+
+    # Start with articles only to keep removal conservative.
+    stop_words = {"the", "a", "an"}
+
+    words = text.split()
+    filtered_words = []
+
+    for word in words:
+        # Separate punctuation from the word.
+        match = re.match(r"^([^\w]*)([\w']+)([^\w]*)$", word)
+
+        if match:
+            prefix, core_word, suffix = match.groups()
+
+            if core_word.lower() in stop_words:
+                continue
+
+            filtered_words.append(prefix + core_word + suffix)
+        else:
+            filtered_words.append(word)
+
+    return " ".join(filtered_words)
