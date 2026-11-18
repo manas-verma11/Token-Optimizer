@@ -279,7 +279,7 @@ The database file is created and initialized by the application. Its actual loca
 ### Step 1: Clone the repository
 
 ```bash
-git clone <YOUR_REPOSITORY_URL>
+git clone https://github.com/manas-verma11/Token-Optimizer
 ```
 
 ### Step 2: Navigate to the project directory
@@ -523,23 +523,6 @@ Planned improvements include:
 
 ---
 
-## 14. License
-
-A license has not yet been specified for this project.
-
----
-
-## Author
-
-**Manas Verma**
-
-B.Tech Computer Science and Engineering
-
-GitHub: [Add your GitHub profile URL]
-
-LinkedIn: [Manas Verma](https://www.linkedin.com/in/manas-verma-b7444b203)
-
----
 
 *Token Optimizer — Reducing unnecessary tokens while preserving important information.*
     
